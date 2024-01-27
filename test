@@ -3,3 +3,52 @@ server.port=8081
 spring.datasource.url=jdbc:mysql://localhost:3306/ballbyballdb
 spring.datasource.username=root
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+
+mysql> show global variables like 'local_infile';
+mysql> set global local_infile=true;
+mysql> exit
+  Bye
+mysql> mysql --local-infile=1 -u root -p
+
+Now, you can execute LOAD DATA query.
+
+CREATE TABLE balls (
+id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+match_id VARCHAR(10),
+season VARCHAR(15),
+start_date VARCHAR(15),
+venue VARCHAR(35),
+innings VARCHAR(25),
+ball VARCHAR(25),
+batting_team VARCHAR(35),
+bowling_team VARCHAR(35),
+striker VARCHAR(15),
+non_striker VARCHAR(15),
+bowler VARCHAR(15),
+runs_off_bat VARCHAR(15),
+extras VARCHAR(15),
+wides VARCHAR(15),
+noballs VARCHAR(15),
+byes VARCHAR(15),
+legbyes VARCHAR(15),
+penalty VARCHAR(15),
+wicket_type VARCHAR(15),
+player_dismissed VARCHAR(15),
+other_wicket_type VARCHAR(15),
+other_player_dismissed VARCHAR(15)
+);
+
+match_id	season	start_date	venue	innings	ball	batting_team	bowling_team	striker	non_striker	bowler	runs_off_bat	extras	wides	noballs	byes	legbyes	penalty	wicket_type	player_dismissed	other_wicket_type	other_player_dismissed
+
+
+
+LOAD DATA LOCAL INFILE "C:/DDrive/Projects/ipl-2023/new_data.csv" INTO TABLE ballbyballdb.balls
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES
+(match_id,
+	season,
+	start_date,
+	venue,	innings,	ball,	batting_team,	bowling_team,	striker,	non_striker,	bowler,	runs_off_bat,	extras,	wides,	noballs,	byes,	legbyes,	penalty,	wicket_type,	player_dismissed,	other_wicket_type,	other_player_dismissed );
