@@ -223,3 +223,16 @@ public class BatsmanModel {
 //    private int strike_rate;
 
 }
+
+
+import com.jdbctemp.ipl.model.BatsmanModel;
+import com.jdbctemp.ipl.payload.PlayerRequest;
+
+import java.util.List;
+
+public interface BatsmanService {
+
+     List<BatsmanModel> getPlayerList(PlayerRequest playerRequest);
+
+}
+
