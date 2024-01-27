@@ -289,3 +289,23 @@ public class BatsmanController {
         return ResponseEntity.ok(playerList);
     }
 }
+
+
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class BowlerModel {
+    private String season;
+    private String start_date;
+    private String venue;
+    private String ball;
+    private String battingTeam;
+    private String bowlingTeam;
+    private String striker;
+    private String bowler;
+    private String runsOffBat;
+    private String wickets;
+
+}
