@@ -236,3 +236,26 @@ public interface BatsmanService {
 
 }
 
+
+
+import com.jdbctemp.ipl.dao.Dao;
+import com.jdbctemp.ipl.model.BowlerModel;
+import com.jdbctemp.ipl.payload.PlayerRequest;
+import com.jdbctemp.ipl.service.BowlerService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class BowlerServiceImpl implements BowlerService {
+
+    @Autowired
+    private Dao<BowlerModel> dao;
+
+    @Override
+    public List<BowlerModel> getPlayerList(PlayerRequest playerRequest) {
+        List<BowlerModel> playerList = dao.getPlayerList(playerRequest);
+        return playerList;
+    }
+}
