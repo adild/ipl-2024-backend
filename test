@@ -52,3 +52,15 @@ IGNORE 1 LINES
 	season,
 	start_date,
 	venue,	innings,	ball,	batting_team,	bowling_team,	striker,	non_striker,	bowler,	runs_off_bat,	extras,	wides,	noballs,	byes,	legbyes,	penalty,	wicket_type,	player_dismissed,	other_wicket_type,	other_player_dismissed );
+
+
+package com.jdbctemp.ipl.dao;
+
+import com.jdbctemp.ipl.payload.PlayerRequest;
+
+import java.util.List;
+
+public interface Dao<T> {
+
+    List<T> getPlayerList(PlayerRequest playerRequest);
+}
