@@ -87,3 +87,96 @@ public class PlayerRequest {
 
 }
 
+
+package com.jdbctemp.ipl.dao;
+
+import com.jdbctemp.ipl.model.BatsmanModel;
+import com.jdbctemp.ipl.payload.PlayerRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Repository
+public class BatsmanDao implements Dao<BatsmanModel> {
+
+    private final String SQLFIRSTPART = "select striker, ANY_VALUE(batting_team) as batting_team, ANY_VALUE(bowling_team) as bowling_team, sum(runs_off_bat) as runs_off_bat, \n" +
+            "(count(ball) - COUNT(NULLIF(TRIM(wides), ''))) as Ball, ANY_VALUE(bowler) as Bowler, ANY_VALUE(season) as Season, ANY_VALUE(start_date) as start_date, \n" +
+            "ANY_VALUE(venue) as Venue, count(if(player_dismissed = striker, striker, NULL)) as Wickets \n" +
+            "from balls \n" +
+            "where striker=? ";
+
+    private final String SQLLASTPART = "group by match_id order by ANY_VALUE(start_date) DESC";
+
+    private final String SQLTEAM = "AND bowling_team=? ";
+
+    private final String SQLVENUE = "AND venue=? ";
+
+    private final String SQLBOWLER = "AND bowler=? ";
+
+    @Autowired
+    private final JdbcTemplate jdbcTemplate;
+
+    public BatsmanDao(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    @Override
+    public List<BatsmanModel> getPlayerList(PlayerRequest playerRequest) {
+
+        RowMapper<BatsmanModel> rowMapper = (rs, rowNum) -> {
+            BatsmanModel bm = new BatsmanModel();
+            bm.setStriker(rs.getString("striker"));
+            bm.setBattingTeam(rs.getString("batting_team"));
+            bm.setBowlingTeam(rs.getString("bowling_team"));
+            bm.setRunsOffBat(rs.getString("runs_off_bat"));
+            bm.setBall(rs.getString("ball"));
+            bm.setSeason(rs.getString("season"));
+            if (!playerRequest.getPlayer2().isEmpty())
+                bm.setBowler(rs.getString("bowler"));
+            bm.setStart_date(rs.getString("start_date"));
+            bm.setVenue((rs.getString("venue")));
+            bm.setWickets(rs.getString("wickets"));
+
+
+            return bm;
+        };
+
+        List<String> queryArgs = new ArrayList<>();
+        String finalSQl = "";
+
+        queryArgs.add(playerRequest.getPlayer1());
+
+        if (!playerRequest.getTeam().isEmpty()) {
+            finalSQl = SQLTEAM;
+            queryArgs.add(playerRequest.getTeam());
+        }
+
+        if (!playerRequest.getVenue().isEmpty()) {
+            finalSQl += SQLVENUE;
+            queryArgs.add(playerRequest.getVenue());
+        }
+
+        if (!playerRequest.getPlayer2().isEmpty()) {
+            finalSQl += SQLBOWLER;
+            queryArgs.add(playerRequest.getPlayer2());
+        }
+
+        /* this is the part I used from the above stackoverflow question */
+        Object[] preparedStatementArgs = new Object[queryArgs.size()];
+        for (int i = 0; i < preparedStatementArgs.length; i++) {
+            preparedStatementArgs[i] = queryArgs.get(i);
+            System.out.println("prepare: " + preparedStatementArgs[i]);
+            System.out.println("queruarhs: " + queryArgs.get(i));
+        }
+
+        finalSQl = SQLFIRSTPART + finalSQl + SQLLASTPART;
+
+        return jdbcTemplate.query(finalSQl, preparedStatementArgs, rowMapper);
+//        return jdbcTemplate.query(sql, rowMapper);
+    }
+}
+
