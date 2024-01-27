@@ -64,3 +64,26 @@ public interface Dao<T> {
 
     List<T> getPlayerList(PlayerRequest playerRequest);
 }
+
+package com.jdbctemp.ipl.payload;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+@AllArgsConstructor
+@Getter
+@Setter
+public class PlayerRequest {
+
+    @NotEmpty(message = "Player 1 cannot be empty, Please enter something")
+    private String player1;
+    private String player2;
+    private String team;
+    private String venue;
+
+}
+
